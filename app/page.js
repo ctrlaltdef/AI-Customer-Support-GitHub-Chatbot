@@ -5,10 +5,11 @@ import {
   HarmCategory,
   HarmBlockThreshold,
 } from '@google/generative-ai';
+import { fetchGitHubData } from '../utils/github';
 
 export default function Home() {
   const [messages, setMessages] = useState([
-    { text: "Hi, I'm AmazonBot! How can I assist you today?", role: "bot", timestamp: new Date() }
+    { text: "Hi, I'm GitBot! Your virtual Git assistant. How can I assist you today?\nTo search for a repository on Github preface your prompt with 'find repository:' followed by what you are looking for.", role: "bot", timestamp: new Date() }
   ]);
   const [userInput, setUserInput] = useState("");
   const [chat, setChat] = useState(null);
@@ -82,65 +83,61 @@ export default function Home() {
       setMessages((prevMessages) => [...prevMessages, userMessage]);
       setUserInput("");
 
-      if (chat) {
-        const promptWithRole = `
-            Role: You are AmazonBot, an intelligent and reliable virtual assistant designed to support Amazon customers. 
-            Your primary role is to assist users by providing accurate, concise, brief and helpful information related to Amazon products, order tracking, account management, and general inquiries about services. If they ask to give a detailed response
+      let botMessage = '';
+
+      if (userInput.toLowerCase().includes("find repository:") || userInput.toLowerCase().includes("find repositories:")) {
+        // Fetch GitHub data
+        const githubData = await fetchGitHubData(userInput);
+
+        if (githubData.items && githubData.items.length > 0) {
+          botMessage = `Here are some GitHub repositories related to your query:\n\n${githubData.items.map(repo => `- ${repo.full_name}: ${repo.html_url}`).join('\n')}`;
+        } else {
+          botMessage = "I couldn't find any relevant repositories on GitHub.";
+        }
+      } else {
+        // Use Google Gen-AI for non-GitHub-related queries
+        if (chat) {
+          const promptWithRole = `
+            Role: You are GitBot, an intelligent and reliable virtual assistant designed to assist with information related to Git repositories, version control, and general programming inquiries. 
+            Your primary role is to assist users by providing accurate, concise, brief and helpful information related to Git commands, repository management, version control best practices, and general programming help. If they ask to give a detailed response
             then only give a long response.
 
-            Tone: Friendly, helpful, and informative. Always aim to assist users efficiently and provide a positive shopping experience.
+            Tone: Friendly, helpful, and informative. Always aim to assist users efficiently and provide a positive experience.
 
             Goals:
-            - Understand Customer Intent: Accurately interpret customer questions and provide relevant responses or direct them to the appropriate resources.
-            - Product Information: Provide details about products, including specifications, availability, and pricing.
-            - Order Tracking: Help customers track their orders and provide updates on shipping status.
-            - Account Management: Assist with account-related issues such as password resets, order history, and payment methods.
-            - General Inquiries: Address a variety of general inquiries about Amazon's services, including returns, refunds, and delivery options.
+            - Understand User Intent: Accurately interpret user questions and provide relevant responses or direct them to the appropriate resources.
+            - Git Commands: Provide details about Git commands, their usage, and examples.
+            - Repository Management: Assist with managing Git repositories, including cloning, branching, merging, and pushing changes.
+            - Version Control: Explain concepts related to version control, such as commits, branches, and merges.
+            - General Programming Help: Offer guidance on programming issues or questions related to version control.
 
             Knowledge Scope:
-            - Product Information: Understand Amazon's product catalog, including categories, features, and availability.
-            - Order Tracking: Provide information on how to track orders, estimated delivery times, and shipping methods.
-            - Account Management: Help with account-related tasks such as updating personal information, managing payment methods, and resolving login issues.
-            - General Services: Offer guidance on Amazon's services such as Prime membership, return policies, and customer support options.
-            - Troubleshooting: Assist with resolving common issues related to shopping, orders, or account management.
+            - Git Commands: Understand commonly used Git commands, their options, and syntax.
+            - Repository Management: Provide instructions on managing Git repositories, including setting up remote repositories and handling conflicts.
+            - Version Control: Explain core concepts of version control, including commits, branches, merges, and rebases.
+            - General Programming: Offer assistance with programming-related questions that intersect with version control.
 
             Limitations:
-            - You do not have access to personal customer data or proprietary Amazon systems unless shared in the conversation.
-            - You cannot directly modify orders or account settings; your role is advisory.
-            - You should avoid offering legal or financial advice beyond the scope of Amazon's policies.
+            - You do not have access to private user data or specific repository details unless shared in the conversation.
+            - You cannot directly execute Git commands or modify repositories; your role is advisory.
+            - You should avoid offering advanced programming or Git-related advice beyond the scope of general best practices.
 
             Example Scenarios:
-            - A customer needs help finding a specific product on Amazon.
-            - A user wants to track their recent order and get shipping updates.
-            - A customer needs assistance with a return or refund request.
-            - A user is having trouble logging into their account and needs a password reset.
-            - A customer is looking for information on Amazon Prime benefits and services.
+            - A user needs help with a specific Git command or its syntax.
+            - A user wants guidance on how to resolve a Git merge conflict.
+            - A user needs help with setting up a remote Git repository.
+            - A user has a question about best practices for managing branches in Git.
+            - A user is looking for advice on version control strategies for a programming project.
           `;
 
-        const result = await chat.sendMessage(`${promptWithRole}\n\n${userInput}`);
-        const botMessage = result.response.text().replace(/\*/g, '');  // Remove asterisks from bot response
-
-        // Prepare bot message for gradual display
-        let displayedText = '';
-        const finalBotMessage = { text: '', role: "bot", timestamp: new Date() };
-
-        // Add initial empty bot message
-        setMessages((prevMessages) => [...prevMessages, finalBotMessage]);
-
-        // Simulate streaming by gradually revealing the bot's response
-        for (let i = 0; i < botMessage.length; i++) {
-          displayedText += botMessage[i];
-          await new Promise(resolve => setTimeout(resolve, 5));  // Adjust the delay to control the speed
-          setMessages((prevMessages) => {
-            const updatedMessages = [...prevMessages];
-            updatedMessages[updatedMessages.length - 1] = {
-              ...finalBotMessage,
-              text: displayedText,
-            };
-            return updatedMessages;
-          });
+          const result = await chat.sendMessage(`${promptWithRole}\n\n${userInput}`);
+          botMessage = result.response.text().replace(/\*/g, '');
         }
       }
+
+      const finalBotMessage = { text: botMessage, role: "bot", timestamp: new Date() };
+      setMessages((prevMessages) => [...prevMessages, finalBotMessage]);
+
     } catch (err) {
       setError(err.message);
     }
@@ -159,10 +156,10 @@ export default function Home() {
   const text = "text-gray-100";
 
   return (
-    <div className={`flex items-center justify-center bg-white h-screen`}>
+    <div className={`flex items-center justify-center bg-white h-screen`} >
       <div className={`w-full max-w-5xl ${primary} ${text} rounded-2xl shadow-lg h-[500px]`}>
         <div className="flex justify-between items-center p-4 border-b border-gray-700">
-          <h1 className={`text-xl font-bold ${text}`}>AmazonBot</h1>
+          <h1 className={`text-xl font-bold ${text}`}>GitBot</h1>
         </div>
         <div className={`overflow-y-auto ${secondary} scrollbar-hidden p-4 h-[calc(100%-96px)]`}>
           {messages.map((msg, index) =>
