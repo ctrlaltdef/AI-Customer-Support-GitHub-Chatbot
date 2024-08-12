@@ -25,8 +25,9 @@ export default function Home() {
         />
         <h1 className="text-5xl font-bold text-[#000025] mb-4">Welcome to GitBot</h1>
         <p className="text-xl text-[#616161] text-center max-w-2xl">
-          GitBot is your friendly assistant here to help you navigate both Git and GitHub. Whether you're a beginner or an experienced developer, GitBot is designed to make your experience with version control and repository management smoother and more enjoyable.
+          GitBot is your friendly assistant here to help you navigate both Git and GitHub. Whether you&apos;re a beginner or an experienced developer, GitBot is designed to make your experience with version control and repository management smoother and more enjoyable.
         </p>
+
       </div>
       <div className="flex space-x-4">
         <button

@@ -98,7 +98,7 @@ export default function SignUp() {
       <div className='relative md:w-1/2 w-full h-[50vh] md:h-full flex flex-col items-center justify-center p-4 bg-[#ffffff]'>
         <Image
           src={'/botLogo.png'}
-          alt='Logo'
+          alt='gitbot-Logo'
           width={200}
           height={200}
           className='mb-4'
@@ -144,12 +144,12 @@ export default function SignUp() {
           </div>
 
           <button onClick={signInWithGoogle} className={`w-full bg-white text-[#05001b] font-semibold border ${border} rounded-md p-4 text-center flex items-center justify-center focus:outline-none hover:bg-gray-50 transition-all mb-2`}>
-            <Image src={'/google-icon.png'} width={20} height={20} className='mr-2' />
+            <Image src={'/google-icon.png'} alt='google-logo' width={20} height={20} className='mr-2' />
             Sign Up with Google
           </button>
 
           <button onClick={signInWithGithub} className={`w-full bg-white text-[#05001b] font-semibold border ${border} rounded-md p-4 text-center flex items-center justify-center focus:outline-none hover:bg-gray-50 transition-all`}>
-            <Image src={'/github-icon.png'} width={20} height={20} className='mr-2' />
+            <Image src={'/github-icon.png'} alt='github-logo' width={20} height={20} className='mr-2' />
             Sign Up with GitHub
           </button>
         </div>

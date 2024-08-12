@@ -101,7 +101,7 @@ export default function SignIn() {
       <div className='relative md:w-1/2 w-full h-[50vh] md:h-full flex flex-col items-center justify-center p-4 bg-[#ffffff]'>
         <Image
           src={'/botLogo.png'}
-          alt='Logo'
+          alt='gitbot-Logo'
           width={200}
           height={200}
           className='mb-4'
@@ -147,18 +147,18 @@ export default function SignIn() {
           </div>
 
           <button onClick={signInWithGoogle} className={`w-full bg-white text-[#05001b] font-semibold border ${border} rounded-md p-4 text-center flex items-center justify-center focus:outline-none hover:bg-gray-50 transition-all mb-2`}>
-            <Image src={'/google-icon.png'} width={20} height={20} className='mr-2' />
+            <Image src={'/google-icon.png'} alt='google-logo' width={20} height={20} className='mr-2' />
             Sign In with Google
           </button>
 
           <button onClick={signInWithGithub} className={`w-full bg-white text-[#05001b] font-semibold border ${border} rounded-md p-4 text-center flex items-center justify-center focus:outline-none hover:bg-gray-50 transition-all`}>
-            <Image src={'/github-icon.png'} width={20} height={20} className='mr-2' />
+            <Image src={'/github-icon.png'} alt='github-logo' width={20} height={20} className='mr-2' />
             Sign In with GitHub
           </button>
         </div>
 
         <div className='w-full flex items-center justify-center mt-4'>
-          <p className={`text-sm font-normal`}>Don't have an account? <a href="/signup" className='font-semibold underline underline-offset-2 cursor-pointer'>Sign up</a></p>
+          <p className={`text-sm font-normal`}>Don&apos;t have an account? <a href="/signup" className='font-semibold underline underline-offset-2 cursor-pointer'>Sign up</a></p>
         </div>
       </div>
     </div>
