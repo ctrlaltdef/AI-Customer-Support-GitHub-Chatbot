@@ -2,7 +2,10 @@
 // tailwind.config.js
 module.exports = {
   content: [
-    'app/page.js'
+    'app/page.js',
+    "app/signup/page.js",
+    "app/signin/page.js",
+    "app/chat/page.js"
   ],
   theme: {
     extend: {},
